@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Exposure of the US Job Market</title>
+<title>AI 对美国就业市场的影响</title>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -230,52 +230,52 @@ canvas#canvas {
 
 <div id="sidebar">
   <div>
-    <h1>AI Exposure of the US Job Market</h1>
-    <div class="subtitle">342 occupations &middot; area = employment &middot; color = AI exposure<br>Data from <a href="https://www.bls.gov/ooh/">BLS</a>, scored by Gemini Flash<br><a href="https://github.com/karpathy/jobs">GitHub</a></div>
+    <h1>AI 对美国就业市场的影响</h1>
+    <div class="subtitle">342 个职业 &middot; 面积 = 就业人数 &middot; 颜色 = AI 暴露度<br>数据来源 <a href="https://www.bls.gov/ooh/">BLS</a>，由 Gemini Flash 评分<br><a href="https://github.com/yuevthins/jobs">GitHub</a></div>
   </div>
 
   <div class="stat-section">
-    <h3>Total jobs</h3>
+    <h3>总就业人数</h3>
     <div class="stat-big" id="statTotalJobs">—</div>
   </div>
 
   <div class="stat-section">
-    <h3>Weighted avg. exposure</h3>
+    <h3>加权平均暴露度</h3>
     <div class="stat-big" id="statAvgExposure">—</div>
-    <div class="stat-label">job-weighted, 0–10 scale</div>
+    <div class="stat-label">按就业人数加权，0–10 分</div>
   </div>
 
   <div class="stat-section">
-    <h3>Jobs by exposure (weighted by employment)</h3>
+    <h3>各暴露度就业分布（按人数加权）</h3>
     <div class="histogram" id="histogram"></div>
     <div class="hist-labels"><span>0</span><span>5</span><span>10</span></div>
   </div>
 
   <div class="stat-section">
-    <h3>Breakdown</h3>
+    <h3>暴露等级分布</h3>
     <div class="tier-bar" id="tierBar"></div>
   </div>
 
   <div class="stat-section">
-    <h3>Exposure by pay</h3>
+    <h3>按薪资的暴露度</h3>
     <div class="hbar-chart" id="payChart"></div>
   </div>
 
   <div class="stat-section">
-    <h3>Exposure by education</h3>
+    <h3>按学历的暴露度</h3>
     <div class="hbar-chart" id="eduChart"></div>
   </div>
 
   <div class="stat-section">
-    <h3>Wages exposed</h3>
+    <h3>受影响薪资总额</h3>
     <div class="stat-big" id="statWages">—</div>
-    <div class="stat-label" id="statWagesDesc">annual wages in high-exposure jobs (7+)</div>
+    <div class="stat-label" id="statWagesDesc">高暴露度职业（7+）的年薪总额</div>
   </div>
 
   <div class="gradient-legend">
-    <span>Low</span>
+    <span>低</span>
     <canvas id="gradientLegend" width="80" height="8"></canvas>
-    <span>High</span>
+    <span>高</span>
   </div>
 </div>
 
@@ -493,7 +493,7 @@ function draw() {
 
       if (rh > 34 && rw > 60) {
         const info = (r.exposure != null ? r.exposure + "/10" : "") +
-                     (r.jobs ? " \u00b7 " + formatNumber(r.jobs) + " jobs" : "");
+                     (r.jobs ? " \u00b7 " + formatNumber(r.jobs) + " 人" : "");
         ctx.font = `400 ${Math.max(8, fontSize - 2)}px -apple-system, system-ui, sans-serif`;
         ctx.fillStyle = "rgba(255,255,255,0.5)";
         ctx.fillText(info, rx + 5, ry + 4 + fontSize + 2);
@@ -519,8 +519,9 @@ function hitTest(mx, my) {
 
 function formatNumber(n) {
   if (n == null) return "\u2014";
-  if (n >= 1000000) return (n / 1000000).toFixed(1) + "M";
-  if (n >= 1000) return Math.round(n / 1000) + "K";
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + "百万";
+  if (n >= 10000) return (n / 10000).toFixed(1) + "万";
+  if (n >= 1000) return Math.round(n / 1000) + "千";
   return n.toLocaleString();
 }
 
@@ -539,7 +540,7 @@ function showTooltip(d, mx, my) {
     const barWidth = score * 10;
     const color = exposureColorCSS(score, 1);
     tt.querySelector(".tt-exposure").innerHTML =
-      `<span style="color:${color};font-weight:600;">AI Exposure: ${score}/10</span>` +
+      `<span style="color:${color};font-weight:600;">AI 暴露度：${score}/10</span>` +
       `<div style="margin-top:3px;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;">` +
       `<div style="height:100%;width:${barWidth}%;background:${color};border-radius:2px;"></div></div>`;
   } else {
@@ -547,10 +548,10 @@ function showTooltip(d, mx, my) {
   }
 
   tt.querySelector(".tt-stats").innerHTML = `
-    <span class="label">Median pay</span><span class="value">${formatPay(d.pay)}</span>
-    <span class="label">Jobs (2024)</span><span class="value">${formatNumber(d.jobs)}</span>
-    <span class="label">Outlook</span><span class="value">${d.outlook != null ? d.outlook + '%' : '\u2014'} ${d.outlook_desc ? '(' + d.outlook_desc + ')' : ''}</span>
-    <span class="label">Education</span><span class="value">${d.education || '\u2014'}</span>
+    <span class="label">薪资中位数</span><span class="value">${formatPay(d.pay)}</span>
+    <span class="label">就业人数（2024）</span><span class="value">${formatNumber(d.jobs)}</span>
+    <span class="label">就业前景</span><span class="value">${d.outlook != null ? d.outlook + '%' : '\u2014'} ${d.outlook_desc ? '(' + d.outlook_desc + ')' : ''}</span>
+    <span class="label">学历要求</span><span class="value">${d.education || '\u2014'}</span>
   `;
 
   tt.querySelector(".tt-rationale").textContent =
@@ -597,11 +598,11 @@ function computeStats() {
 
   // Tiers
   const tiers = [
-    { name: "Minimal", range: [0, 1], color: exposureColorCSS(0.5, 1) },
-    { name: "Low", range: [2, 3], color: exposureColorCSS(2.5, 1) },
-    { name: "Moderate", range: [4, 5], color: exposureColorCSS(4.5, 1) },
-    { name: "High", range: [6, 7], color: exposureColorCSS(6.5, 1) },
-    { name: "Very high", range: [8, 10], color: exposureColorCSS(9, 1) },
+    { name: "极低", range: [0, 1], color: exposureColorCSS(0.5, 1) },
+    { name: "低", range: [2, 3], color: exposureColorCSS(2.5, 1) },
+    { name: "中等", range: [4, 5], color: exposureColorCSS(4.5, 1) },
+    { name: "高", range: [6, 7], color: exposureColorCSS(6.5, 1) },
+    { name: "极高", range: [8, 10], color: exposureColorCSS(9, 1) },
   ];
   for (const tier of tiers) {
     tier.jobs = 0;
@@ -624,7 +625,7 @@ function computeStats() {
 
   // Render
   document.getElementById("statTotalJobs").textContent =
-    (totalJobs / 1e6).toFixed(0) + "M";
+    (totalJobs / 1e6).toFixed(0) + "百万";
   document.getElementById("statAvgExposure").innerHTML =
     `<span style="color:${exposureColorCSS(weightedAvg, 1)}">${weightedAvg.toFixed(1)}</span>`;
 
@@ -633,7 +634,7 @@ function computeStats() {
   const histEl = document.getElementById("histogram");
   histEl.innerHTML = histogram.map((count, i) => {
     const h = maxHist > 0 ? (count / maxHist * 100) : 0;
-    return `<div class="bar" style="height:${Math.max(2, h)}%;background:${exposureColorCSS(i, 0.7)}" title="${i}: ${formatNumber(count)} jobs"></div>`;
+    return `<div class="bar" style="height:${Math.max(2, h)}%;background:${exposureColorCSS(i, 0.7)}" title="${i}: ${formatNumber(count)} 人"></div>`;
   }).join("");
 
   // Tier breakdown
@@ -649,11 +650,11 @@ function computeStats() {
 
   // Exposure by pay band
   const payBands = [
-    { label: "<$35K", min: 0, max: 35000 },
-    { label: "$35–50K", min: 35000, max: 50000 },
-    { label: "$50–75K", min: 50000, max: 75000 },
-    { label: "$75–100K", min: 75000, max: 100000 },
-    { label: "$100K+", min: 100000, max: Infinity },
+    { label: "<$3.5万", min: 0, max: 35000 },
+    { label: "$3.5–5万", min: 35000, max: 50000 },
+    { label: "$5–7.5万", min: 50000, max: 75000 },
+    { label: "$7.5–10万", min: 75000, max: 100000 },
+    { label: "$10万+", min: 100000, max: Infinity },
   ];
   const payChartEl = document.getElementById("payChart");
   payChartEl.innerHTML = payBands.map(band => {
@@ -676,11 +677,11 @@ function computeStats() {
 
   // Exposure by education
   const eduGroups = [
-    { label: "No degree/HS", match: ["No formal educational credential", "High school diploma or equivalent"] },
-    { label: "Postsec/Assoc", match: ["Postsecondary nondegree award", "Some college, no degree", "Associate's degree"] },
-    { label: "Bachelor's", match: ["Bachelor's degree"] },
-    { label: "Master's", match: ["Master's degree"] },
-    { label: "Doctoral/Prof", match: ["Doctoral or professional degree"] },
+    { label: "高中及以下", match: ["No formal educational credential", "High school diploma or equivalent"] },
+    { label: "大专/副学士", match: ["Postsecondary nondegree award", "Some college, no degree", "Associate's degree"] },
+    { label: "本科", match: ["Bachelor's degree"] },
+    { label: "硕士", match: ["Master's degree"] },
+    { label: "博士/专业", match: ["Doctoral or professional degree"] },
   ];
   const eduChartEl = document.getElementById("eduChart");
   eduChartEl.innerHTML = eduGroups.map(grp => {
